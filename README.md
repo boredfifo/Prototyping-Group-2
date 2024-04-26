@@ -1,5 +1,5 @@
 # Prototyping-Group-2
-Malik Moiz Zaheer
+Moiz Zaheer Malik
 Akinwande Mofifoluwa Ipadeola
 Karimi Arya
 Qaiser Mustafa
