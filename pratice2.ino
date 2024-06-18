@@ -3,30 +3,35 @@
 #include "pratice.h"
 #include "color.h"
 
-Ultrasonic praxis;
+Ultrasonic ultrasonic;
 Pratice car;
 Color color;
 
 volatile int check_distance;
+volatile int flag;
 enum colors {OTHER_COLOR, RED, BLUE};
 colors COLOR;
 
-enum states {LINE_FOLLOWER, DETECTION, FAST};
+enum states {IDLE, LINE_FOLLOWER, DETECTION};
 states STATE;
 
 
 void setup() {
   Serial.begin(9600);
   car.gpio_init();
-  praxis.init();
+  ultrasonic.init();
   color.color_init();
 }
 
 void loop() {
-  STATE = LINE_FOLLOWER;
-
-  praxis.trigger();
-  check_distance = praxis.distance(); 
+  STATE = IDLE;
+  flag = car.check_flag();
+  if(flag == 1){
+    STATE = LINE_FOLLOWER;
+    }
+    
+  ultrasonic.trigger();
+  check_distance = ultrasonic.distance(); 
   
  if(check_distance <= 4){
     car.stop();
@@ -55,6 +60,11 @@ void loop() {
      case LINE_FOLLOWER:
       line_follower();
       break;
+
+     case IDLE:
+       car.stop();
+       ultrasonic.low();
+       break;
     }
   
 }
@@ -77,17 +87,12 @@ void color_detection(){
 
   if(red_color > blue_color && red_color > other_color){
     COLOR = RED;
-    Serial.println("red");
   }
   else if(blue_color > red_color && blue_color > other_color){
     COLOR = BLUE;
-    Serial.println("blue");
     }
   else{
     COLOR = OTHER_COLOR;
-    Serial.println("other color");
     }
     delay(1000);
   }
-
- 
